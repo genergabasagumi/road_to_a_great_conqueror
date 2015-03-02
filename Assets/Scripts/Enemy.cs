@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour {
 	private float count;
 	public bool Attack;
 
+
+
 	void Start () 
 	{
 		Player = GameObject.FindGameObjectWithTag("Player");
