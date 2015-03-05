@@ -1,0 +1,16 @@
+Low poly Cyborg Ninja
+He is rigged and animated.Textures are hand painted and in PSD format. 
+728 tris 
+
+Animation frames
+0-10 = T pose
+10 -50 = Idle
+51 - 65 = Take damage
+71 - 105 = Death
+112 - 129 = Run
+132 - 150 = Run, Attack Slash 01
+151 - 170 = Run, Attack Slash 02
+171 - 185 = Stand, Attack Slash 01
+191 - 210 = Stand, Attack Slash 02
+211 - 250 = Forwad roll
+
