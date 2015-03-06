@@ -67,8 +67,10 @@ public class Enemy : MonoBehaviour {
 
 		else
 			Right = false;
-		if (MyHp <= 0)
+		if (MyHp <= 0) {
+			Player.GetComponent<playerAnimation2>().killCount += 1;
 			DestroyObject (this.gameObject);
+		}
 	}
 	
 	void changeState(int state)

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-//using UnityEngine.UI;
+using UnityEngine.UI;
 
 public class playerAnimation2 : MonoBehaviour {
 	Animator animator;
@@ -19,18 +19,25 @@ public class playerAnimation2 : MonoBehaviour {
 	
 	private Vector2 startPos;
 	public GameObject Attack;
-	public float timeAttack;
-	private float count;
+	//public float timeAttack;
+	//private float count;
 	public float MaxHP;
 	
 	//public Text typeText;
-	public GameObject typeObj;
+	public GameObject killObj;
 	public float Crit;
 	public int random;
 	public float MyAttackDamage;
 	public float currentDamage;
 
-
+	
+	public int killCount;
+		
+	public Text killText;
+	public GameObject effectSlash;
+	public GameObject effectCrit;
+	public bool Right;
+	private Vector3 SpawnPart;
 	public class characterType
 	{
 		public int HP;
@@ -67,44 +74,50 @@ public class playerAnimation2 : MonoBehaviour {
 	
 	void Start()
 	{
+		killCount = 0;
+		killText = killObj.GetComponent<Text> ();
 		animator = this.GetComponent<Animator>();
 		//damaged = false;
 		//playerType = new characterType(10, 5, 5, 1);
 		currentDamage = MyAttackDamage;
 		//typeText = typeObj.GetComponent<Text>();
-		
 	}
 	
 	void FixedUpdate()
 	{
-		keycontrols ();
+
 	}
 	
 	void Update()
 	{
 		//touched ();
 		touchControl ();
+		killText.text = killCount.ToString();
 	
+		keycontrols ();
+
 	}
 	
 	void keycontrols()
 	{
 		
-		if (Input.GetKeyDown ("right"))
+		if (Input.GetKeyDown ("right")&&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
+		//if (Input.GetKeyDown ("right")&& this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
 		{
 			changeDirection ("right");
-			if(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical"))
-				AttackMode();
+			Right = true;
+			AttackMode();
 
 		}
 		
-		else if (Input.GetKeyDown("left"))
+		else if (Input.GetKeyDown("left")&&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
+		//else if (Input.GetKeyDown ("left")&& this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
 		{	
 			changeDirection ("left");
-			if(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical"))
-				AttackMode();
+			Right = false;
+			AttackMode();
 		}
-		
+		/*
 		else if (Input.GetKeyDown("up"))
 		{	
 			playerType.changeType("up");
@@ -116,19 +129,13 @@ public class playerAnimation2 : MonoBehaviour {
 			playerType.changeType("down");
 			//typeText.text = "down";
 		}
+		*/
 		
-		else
+		//else if()
+			else
 		{
 			changeState(STATE_IDLE);
-			if(Attack.activeSelf)
-			{
-				count += 1 * Time.deltaTime;
-				if(count >= timeAttack)
-				{
-					Attack.SetActive(false);
-					count = 0;
-				}
-			}
+
 		}
 	}
 	
@@ -173,37 +180,22 @@ public class playerAnimation2 : MonoBehaviour {
 					//Shrink ();
 					break;
 				}
-				if (touch.position.x > Screen.width/2 && touch.position.y < Screen.height/2) 
+				if ((touch.position.x > Screen.width/2 && touch.position.y < Screen.height/2) &&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
 				{
 					changeDirection ("right");
-					changeState (STATE_ATTACK);
-					if(!Attack.activeSelf)
-					{
-						Attack.SetActive (true);
-					}
+					AttackMode();
+
 				} 
 				
-				else if (touch.position.x < Screen.width/2 && touch.position.y < Screen.height/2) 
+				else if ((touch.position.x < Screen.width/2 && touch.position.y < Screen.height/2) &&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
 				{
 					changeDirection ("left");
-					changeState (STATE_ATTACK);
-					if(!Attack.activeSelf)
-					{
-						Attack.SetActive (true);
-					}
+					AttackMode();
 				}
 				else 
 				{
 					changeState (STATE_IDLE);
-					if(Attack.activeSelf)
-					{
-						count += 1 * Time.deltaTime;
-						if(count >= timeAttack)
-						{
-							Attack.SetActive(false);
-							count = 0;
-						}
-					}
+
 				}
 				break;
 			}
@@ -216,15 +208,25 @@ public class playerAnimation2 : MonoBehaviour {
 	void AttackMode()
 	{
 		random = Random.Range (1, 15);
-		if(!Attack.activeSelf)
-		{
-			Attack.SetActive (true);
-		}
-		if (random >= 10) {
+
+		if(Right)
+			SpawnPart = Vector2.right * 2;
+		else
+			SpawnPart = -Vector2.right * 2;
+		SpawnPart.y = 1;
+		if (random >= 13) {
 			changeState(STATE_CRIT);
 			currentDamage = MyAttackDamage * (Crit / 100);
+			//effectCrit.SetActive(true);
+
+			GameObject parti= Instantiate (effectCrit,SpawnPart , Quaternion.identity) as GameObject;
+			Destroy (parti, 1.5f);
+
 		} else {
 			changeState(STATE_ATTACK);
+			GameObject parti= Instantiate (effectSlash, SpawnPart, Quaternion.identity) as GameObject;
+			Destroy (parti, 1.5f);
+			//effectSlash.SetActive(true);
 			currentDamage = MyAttackDamage;
 		}
 	}
