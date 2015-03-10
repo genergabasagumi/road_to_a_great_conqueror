@@ -30,7 +30,7 @@ public class playerAnimation2 : MonoBehaviour {
 	public float MaxHP;
 	
 	//public Text typeText;
-	public GameObject killObj;
+
 	public float Crit;
 	public int random;
 	public float MyAttackDamage;
@@ -46,7 +46,13 @@ public class playerAnimation2 : MonoBehaviour {
 	public bool Right;
 	private Vector3 SpawnPart;
 
-	public bool isEnemyHit;	
+	public float SlashDelay;
+	public float CritDelay;
+	private float tempDelay;
+	private float count;
+	public bool Colliding;
+
+	public GameObject alertObj;
 
 
 	public class characterType
@@ -85,8 +91,9 @@ public class playerAnimation2 : MonoBehaviour {
 	
 	void Start()
 	{
+		alertObj.SetActive (false);
 		killCount = 0;
-		killText = killObj.GetComponent<Text> ();
+
 		animator = this.GetComponent<Animator>();
 		//damaged = false;
 		//playerType = new characterType(10, 5, 5, 1);
@@ -108,23 +115,29 @@ public class playerAnimation2 : MonoBehaviour {
 		}
 		else if(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Dead") && Dead)
 		{
-			Application.LoadLevel(Application.loadedLevelName);
+			StartCoroutine(DeathDelay());
 		}
 	}
 
 	void FixedUpdate()
 	{
 		//touched ();
-
 		killText.text = killCount.ToString();
 		if (!Dead) 
 		{
 			touchControl ();
-			//keycontrols ();
+			//keycontrols ();`
 		}
 		DeathCheck ();
 	}
-	
+	void Update()
+	{
+
+		if (this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Wait"))
+		    alertObj.SetActive(true);
+		else 
+			alertObj.SetActive(false);
+	}
 	void keycontrols()
 	{
 		if (Input.GetKeyDown ("right") && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle")) {
@@ -138,6 +151,8 @@ public class playerAnimation2 : MonoBehaviour {
 			Right = false;
 			AttackMode ();
 		} 
+
+
 
 	}
 	
@@ -154,7 +169,7 @@ public class playerAnimation2 : MonoBehaviour {
 			case TouchPhase.Began:
 				
 				startPos = touch.position;
-				
+				Colliding = false;
 				break;
 				
 			case TouchPhase.Ended:
@@ -216,11 +231,9 @@ public class playerAnimation2 : MonoBehaviour {
 		SpawnPart.y = 1;
 		if (random >= 13) {
 			changeState(STATE_CRIT);
-			//animator.SetInteger ("state", 2);
+			tempDelay = CritDelay;
+			StartCoroutine (Counting ());
 			currentDamage = MyAttackDamage * (Crit / 100);
-			//effectCrit.SetActive(true);
-
-
 			//GetComponent<AudioSource>().PlayOneShot(playerCritAudio, 1.0f);
 			GameObject parti= Instantiate (effectCrit,SpawnPart , Quaternion.identity) as GameObject;
 			Destroy (parti, 1.5f);
@@ -228,13 +241,12 @@ public class playerAnimation2 : MonoBehaviour {
 
 		} else {
 			changeState(STATE_ATTACK);
-			//animator.SetInteger ("state", 1);
 			//GetComponent<AudioSource>().PlayOneShot(playerAttackAudio, 1.0f);
-			//if(isEnemyHit)
+			tempDelay = SlashDelay;
+			StartCoroutine (Counting ());
 			currentDamage = MyAttackDamage;
 			GameObject parti= Instantiate (effectSlash, SpawnPart, Quaternion.identity) as GameObject;
 			Destroy (parti, 1.5f);
-			//effectSlash.SetActive(true);
 
 		}
 	}
@@ -279,5 +291,18 @@ public class playerAnimation2 : MonoBehaviour {
 				_currentDirection = "left";
 			}
 		}
+	}
+
+	IEnumerator Counting()
+	{
+		yield return new WaitForSeconds (tempDelay);
+		if (!Colliding) {
+			animator.SetTrigger ("Wait");
+		}
+	}
+	IEnumerator DeathDelay()
+	{
+		yield return new WaitForSeconds (3);
+		Application.LoadLevel (Application.loadedLevel);
 	}
 }

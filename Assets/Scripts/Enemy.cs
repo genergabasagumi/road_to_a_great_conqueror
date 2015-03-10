@@ -22,6 +22,9 @@ public class Enemy : MonoBehaviour {
 	const int STATE_ATTACK = 2;
 	int _currentAnimationState = STATE_IDLE;
 
+	public GameObject alertObj;
+
+
 	void Start () 
 	{
 		animator = this.GetComponent<Animator>();
@@ -99,8 +102,9 @@ public class Enemy : MonoBehaviour {
 	{
 		if (other.gameObject.name == ("Attack")) 
 		{
-			Player.GetComponent<playerAnimation2>().isEnemyHit = true;
+			//Player.GetComponent<playerAnimation2>().isEnemyHit = true;
 		//	Imhurt = true;
+			Player.GetComponent<playerAnimation2>().Colliding = true;
 			MyHp -= Player.GetComponent<playerAnimation2> ().currentDamage;
 			Imhurt = false;
 		}
