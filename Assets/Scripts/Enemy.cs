@@ -99,6 +99,7 @@ public class Enemy : MonoBehaviour {
 	{
 		if (other.gameObject.name == ("Attack")) 
 		{
+			Player.GetComponent<playerAnimation2>().isEnemyHit = true;
 		//	Imhurt = true;
 			MyHp -= Player.GetComponent<playerAnimation2> ().currentDamage;
 			Imhurt = false;

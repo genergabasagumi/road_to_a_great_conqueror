@@ -3,14 +3,20 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class playerAnimation2 : MonoBehaviour {
+
+	public AudioClip playerDeathAudio;
+	public AudioClip playerAttackAudio;
+	public AudioClip playerCritAudio;
+	bool Dead = false;
+
 	Animator animator;
 	bool _isPlaying_walk = false;
 	
-	const int STATE_IDLE = 0;
+	const int STATE_DEAD = 0;
 	const int STATE_ATTACK = 1;
 	const int STATE_CRIT = 2;
 
-	int _currentAnimationState = STATE_IDLE;
+	//int _currentAnimationState = STATE_IDLE;
 	
 	string _currentDirection = "left";
 	
@@ -34,10 +40,15 @@ public class playerAnimation2 : MonoBehaviour {
 	public int killCount;
 		
 	public Text killText;
+
 	public GameObject effectSlash;
 	public GameObject effectCrit;
 	public bool Right;
 	private Vector3 SpawnPart;
+
+	public bool isEnemyHit;	
+
+
 	public class characterType
 	{
 		public int HP;
@@ -81,62 +92,53 @@ public class playerAnimation2 : MonoBehaviour {
 		//playerType = new characterType(10, 5, 5, 1);
 		currentDamage = MyAttackDamage;
 		//typeText = typeObj.GetComponent<Text>();
+
+		InvokeRepeating("DeathCheck", 0, 0.0001f);
 	}
 	
+
+
+	void DeathCheck()
+	{
+		if (MaxHP <= 0 && Dead == false) 
+		{
+			changeState(STATE_DEAD);
+			//GetComponent<AudioSource> ().PlayOneShot (playerDeathAudio, 1);
+			Dead = true;
+		}
+		else if(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Dead") && Dead)
+		{
+			Application.LoadLevel(Application.loadedLevelName);
+		}
+	}
+
 	void FixedUpdate()
 	{
-
-	}
-	
-	void Update()
-	{
 		//touched ();
-		touchControl ();
-		killText.text = killCount.ToString();
-	
-		keycontrols ();
 
+		killText.text = killCount.ToString();
+		if (!Dead) 
+		{
+			touchControl ();
+			//keycontrols ();
+		}
+		DeathCheck ();
 	}
 	
 	void keycontrols()
 	{
-		
-		if (Input.GetKeyDown ("right")&&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
-		//if (Input.GetKeyDown ("right")&& this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-		{
+		if (Input.GetKeyDown ("right") && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle")) {
 			changeDirection ("right");
 			Right = true;
-			AttackMode();
+			AttackMode ();
 
-		}
-		
-		else if (Input.GetKeyDown("left")&&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
-		//else if (Input.GetKeyDown ("left")&& this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-		{	
+
+		} else if (Input.GetKeyDown ("left") && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle")) {
 			changeDirection ("left");
 			Right = false;
-			AttackMode();
-		}
-		/*
-		else if (Input.GetKeyDown("up"))
-		{	
-			playerType.changeType("up");
-			//typeText.text = "up";
-		}
-		
-		else if (Input.GetKeyDown("down"))
-		{	
-			playerType.changeType("down");
-			//typeText.text = "down";
-		}
-		*/
-		
-		//else if()
-			else
-		{
-			changeState(STATE_IDLE);
+			AttackMode ();
+		} 
 
-		}
 	}
 	
 	void touchControl()
@@ -156,9 +158,10 @@ public class playerAnimation2 : MonoBehaviour {
 				break;
 				
 			case TouchPhase.Ended:
-				
+			{
+				/*
 				float swipeDistVertical = (new Vector3(0, touch.position.y, 0) - new Vector3(0, startPos.y, 0)).magnitude;
-				
+
 				if (swipeDistVertical > minSwipeDistY) 
 					
 				{
@@ -180,33 +183,30 @@ public class playerAnimation2 : MonoBehaviour {
 					//Shrink ();
 					break;
 				}
-				if ((touch.position.x > Screen.width/2 && touch.position.y < Screen.height/2) &&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
+				*/
+				if ((touch.position.x > Screen.width/2 ) && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
 				{
 					changeDirection ("right");
+					Right = true;
 					AttackMode();
-
 				} 
 				
-				else if ((touch.position.x < Screen.width/2 && touch.position.y < Screen.height/2) &&(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Critical")))
+				else if ((touch.position.x < Screen.width/2) && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
 				{
 					changeDirection ("left");
+					Right = false;
 					AttackMode();
 				}
-				else 
-				{
-					changeState (STATE_IDLE);
 
-				}
 				break;
 			}
-			
-			
-			
+			}	
 		}
 	}
 
 	void AttackMode()
 	{
+
 		random = Random.Range (1, 15);
 
 		if(Right)
@@ -216,43 +216,52 @@ public class playerAnimation2 : MonoBehaviour {
 		SpawnPart.y = 1;
 		if (random >= 13) {
 			changeState(STATE_CRIT);
+			//animator.SetInteger ("state", 2);
 			currentDamage = MyAttackDamage * (Crit / 100);
 			//effectCrit.SetActive(true);
 
+
+			//GetComponent<AudioSource>().PlayOneShot(playerCritAudio, 1.0f);
 			GameObject parti= Instantiate (effectCrit,SpawnPart , Quaternion.identity) as GameObject;
 			Destroy (parti, 1.5f);
 
+
 		} else {
 			changeState(STATE_ATTACK);
+			//animator.SetInteger ("state", 1);
+			//GetComponent<AudioSource>().PlayOneShot(playerAttackAudio, 1.0f);
+			//if(isEnemyHit)
+			currentDamage = MyAttackDamage;
 			GameObject parti= Instantiate (effectSlash, SpawnPart, Quaternion.identity) as GameObject;
 			Destroy (parti, 1.5f);
 			//effectSlash.SetActive(true);
-			currentDamage = MyAttackDamage;
+
 		}
 	}
+
 	public void Hurt(int damage)
 	{
 		MaxHP -= damage;
 	}
+
 	void changeState(int state)
 	{
-		if (_currentAnimationState == state)
-			return;
 		switch (state) {
 			
 		case STATE_ATTACK:
-			animator.SetInteger ("state", STATE_ATTACK);
+			animator.SetTrigger ("Attack");
 			break;
 			
-		case STATE_IDLE:
-			animator.SetInteger ("state", STATE_IDLE);
-			break;	
-
+		//case STATE_IDLE:
+			//animator.SetInteger ("state", STATE_IDLE);
+			//break;
+		case STATE_DEAD:
+			animator.SetTrigger ("Dead");
+			break;
 		case STATE_CRIT:
-			animator.SetInteger ("state", STATE_CRIT);
+			animator.SetTrigger ("Critical");
 			break;
 		}
-		_currentAnimationState = state;
 	}
 	
 	void changeDirection(string direction)
