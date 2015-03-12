@@ -36,11 +36,6 @@ public class playerAnimation2 : MonoBehaviour {
 	public float MyAttackDamage;
 	public float currentDamage;
 
-	
-	public int killCount;
-		
-	public Text killText;
-
 	public GameObject effectSlash;
 	public GameObject effectCrit;
 	public bool Right;
@@ -52,7 +47,15 @@ public class playerAnimation2 : MonoBehaviour {
 	private float count;
 	public bool Colliding;
 
+	public int killCount;
+
+	//UI
+	public Text killText;
 	public GameObject alertObj;
+	public Slider hpBar;
+	public GameObject mainMenu;
+
+
 
 
 	public class characterType
@@ -91,6 +94,7 @@ public class playerAnimation2 : MonoBehaviour {
 	
 	void Start()
 	{
+	
 		alertObj.SetActive (false);
 		killCount = 0;
 
@@ -102,15 +106,13 @@ public class playerAnimation2 : MonoBehaviour {
 
 		InvokeRepeating("DeathCheck", 0, 0.0001f);
 	}
-	
-
 
 	void DeathCheck()
 	{
 		if (MaxHP <= 0 && Dead == false) 
 		{
 			changeState(STATE_DEAD);
-			//GetComponent<AudioSource> ().PlayOneShot (playerDeathAudio, 1);
+			GetComponent<AudioSource> ().PlayOneShot (playerDeathAudio, 1);
 			Dead = true;
 		}
 		else if(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Dead") && Dead)
@@ -229,31 +231,35 @@ public class playerAnimation2 : MonoBehaviour {
 		else
 			SpawnPart = -Vector2.right * 2;
 		SpawnPart.y = 1;
-		if (random >= 13) {
+
+		if (random >= 13)
+		{
 			changeState(STATE_CRIT);
 			tempDelay = CritDelay;
 			StartCoroutine (Counting ());
 			currentDamage = MyAttackDamage * (Crit / 100);
-			//GetComponent<AudioSource>().PlayOneShot(playerCritAudio, 1.0f);
+			GetComponent<AudioSource>().PlayOneShot(playerCritAudio, 1.0f);
 			GameObject parti= Instantiate (effectCrit,SpawnPart , Quaternion.identity) as GameObject;
 			Destroy (parti, 1.5f);
 
 
-		} else {
+		} 
+
+		else {
 			changeState(STATE_ATTACK);
-			//GetComponent<AudioSource>().PlayOneShot(playerAttackAudio, 1.0f);
+			GetComponent<AudioSource>().PlayOneShot(playerAttackAudio, 1.0f);
 			tempDelay = SlashDelay;
 			StartCoroutine (Counting ());
 			currentDamage = MyAttackDamage;
 			GameObject parti= Instantiate (effectSlash, SpawnPart, Quaternion.identity) as GameObject;
 			Destroy (parti, 1.5f);
-
 		}
 	}
 
 	public void Hurt(int damage)
 	{
 		MaxHP -= damage;
+		hpBar.value = MaxHP;
 	}
 
 	void changeState(int state)

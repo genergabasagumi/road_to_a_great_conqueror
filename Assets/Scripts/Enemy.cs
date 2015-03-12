@@ -22,7 +22,8 @@ public class Enemy : MonoBehaviour {
 	const int STATE_ATTACK = 2;
 	int _currentAnimationState = STATE_IDLE;
 
-	public GameObject alertObj;
+	public AudioClip enemyAttackAudio;
+
 
 
 	void Start () 
@@ -52,10 +53,12 @@ public class Enemy : MonoBehaviour {
 				count += 1 * Time.deltaTime;
 			if (AttackDelay <= count) 
 			{
-				Player.GetComponent<playerAnimation2> ().Hurt(MyDamage);
 				changeState(STATE_ATTACK);
 				count = 0;
+				GetComponent<AudioSource> ().PlayOneShot (enemyAttackAudio, 1);
+				Player.GetComponent<playerAnimation2> ().Hurt(MyDamage);
 			}
+				
 			else
 				changeState(STATE_IDLE);
 		}

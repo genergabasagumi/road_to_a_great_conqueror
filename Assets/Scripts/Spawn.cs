@@ -40,14 +40,7 @@ public class Spawn : MonoBehaviour {
 					SpawnPoint.x = -pos.x;
 					rot = Quaternion.Euler(0,90,0);
 				}
-				for (int i = 0; i < Enemy.Length - 1; i++)
-				{
-					if(randomEnemy == i)
-					{
-						currentSpawnEnemy = Enemy[i];
-					}
 
-				}
 				if(currentSpawnEnemy !=null)
 				{
 					if (a == Amout && CheckWave > 4)
