@@ -24,14 +24,19 @@ public class Enemy : MonoBehaviour {
 
 	public AudioClip enemyAttackAudio;
 
-
-
+	public bool WalkStopMode;
+	public bool StopWalk;
+	public float timetoStop;
+	public float WalkStopTime;
 	void Start () 
 	{
 		animator = this.GetComponent<Animator>();
 		Player = GameObject.FindGameObjectWithTag("Player");
 		count = (AttackDelay - 0.7f);
-
+		if (WalkStopMode)
+		{
+			StartCoroutine (Timing());
+		}
 		//Destroy (gameObject, 2);
 	}
 	
@@ -43,8 +48,23 @@ public class Enemy : MonoBehaviour {
 		Hit = Physics.Linecast (StartPos.transform.position,Pos.transform.position, 1 << LayerMask.NameToLayer("Player"));
 
 		if (!Hit) {
-			this.transform.position = Vector3.MoveTowards (transform.position, Player.transform.position, moveSpeed);
-			changeState (STATE_WALK);
+			if(!StopWalk)
+			{
+				this.transform.position = Vector3.MoveTowards (transform.position, Player.transform.position, moveSpeed);
+				changeState (STATE_WALK);
+			
+
+			}
+			else
+			{
+				changeState (STATE_IDLE);
+				if (WalkStopMode)
+				{
+					StartCoroutine (Timing());
+		
+				}
+			
+			}
 		} 
 
 		if(Hit)
@@ -110,6 +130,24 @@ public class Enemy : MonoBehaviour {
 			Player.GetComponent<playerAnimation2>().Colliding = true;
 			MyHp -= Player.GetComponent<playerAnimation2> ().currentDamage;
 			Imhurt = false;
+
+			if(Right)
+				this.transform.position = new Vector2(this.transform.position.x - 2,this.transform.position.y);
+				//this.transform.Translate(-Vector2.right * 5);
+
+			else
+				this.transform.position = new Vector2(this.transform.position.x + 2,this.transform.position.y);
+				//this.transform.Translate(Vector2.right * 5);
+			
 		}
+	}
+	IEnumerator Timing()
+	{
+		if(!StopWalk)
+			yield return new WaitForSeconds (WalkStopTime);
+		else
+			yield return new WaitForSeconds (timetoStop);
+		StopWalk = !StopWalk;
+		StopAllCoroutines ();
 	}
 }

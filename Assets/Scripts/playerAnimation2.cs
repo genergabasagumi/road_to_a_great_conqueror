@@ -54,10 +54,8 @@ public class playerAnimation2 : MonoBehaviour {
 	public GameObject alertObj;
 	public Slider hpBar;
 	public GameObject mainMenu;
-
-
-
-
+	public Text deathText;
+	
 	public class characterType
 	{
 		public int HP;
@@ -103,6 +101,7 @@ public class playerAnimation2 : MonoBehaviour {
 		//playerType = new characterType(10, 5, 5, 1);
 		currentDamage = MyAttackDamage;
 		//typeText = typeObj.GetComponent<Text>();
+		deathText.gameObject.SetActive(false);
 
 		InvokeRepeating("DeathCheck", 0, 0.0001f);
 	}
@@ -114,11 +113,18 @@ public class playerAnimation2 : MonoBehaviour {
 			changeState(STATE_DEAD);
 			GetComponent<AudioSource> ().PlayOneShot (playerDeathAudio, 1);
 			Dead = true;
+			mainMenu.GetComponent<inGameMenu>().optionShow();
+			deathText.gameObject.SetActive(true);
 		}
+
+		/*
+		//application.load on death
 		else if(!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Dead") && Dead)
 		{
 			StartCoroutine(DeathDelay());
 		}
+		*/
+
 	}
 
 	void FixedUpdate()

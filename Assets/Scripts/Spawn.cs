@@ -31,7 +31,7 @@ public class Spawn : MonoBehaviour {
 
 			for (int a = 0; a <= Amout; a++) {
 				CheckRandom = Random.Range (1,3);
-				randomEnemy = Random.Range(1,EnemyNumber + 1);
+				randomEnemy = Random.Range(0,EnemyNumber);
 				Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width,Screen.height,0));
 				if (CheckRandom == 1) {
 					SpawnPoint.x = pos.x;
@@ -40,7 +40,11 @@ public class Spawn : MonoBehaviour {
 					SpawnPoint.x = -pos.x;
 					rot = Quaternion.Euler(0,90,0);
 				}
-
+				for (int i = 0; i < Enemy.Length; i++)
+				{
+					if(randomEnemy == i)
+						currentSpawnEnemy = Enemy[i];
+				}
 				if(currentSpawnEnemy !=null)
 				{
 					if (a == Amout && CheckWave > 4)
