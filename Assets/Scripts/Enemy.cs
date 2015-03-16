@@ -28,6 +28,7 @@ public class Enemy : MonoBehaviour {
 	public bool StopWalk;
 	public float timetoStop;
 	public float WalkStopTime;
+
 	void Start () 
 	{
 		animator = this.GetComponent<Animator>();
@@ -52,8 +53,6 @@ public class Enemy : MonoBehaviour {
 			{
 				this.transform.position = Vector3.MoveTowards (transform.position, Player.transform.position, moveSpeed);
 				changeState (STATE_WALK);
-			
-
 			}
 			else
 			{
@@ -74,13 +73,17 @@ public class Enemy : MonoBehaviour {
 			if (AttackDelay <= count) 
 			{
 				changeState(STATE_ATTACK);
+
 				count = 0;
 				GetComponent<AudioSource> ().PlayOneShot (enemyAttackAudio, 1);
-				Player.GetComponent<playerAnimation2> ().Hurt(MyDamage);
+				//Player.GetComponent<playerAnimation2> ().Hurt(MyDamage);
 			}
 				
 			else
+			{
 				changeState(STATE_IDLE);
+
+			}
 		}
 
 	//	if (Imhurt) {
@@ -93,12 +96,18 @@ public class Enemy : MonoBehaviour {
 
 		else
 			Right = false;
+
 		if (MyHp <= 0) {
 			Player.GetComponent<playerAnimation2>().killCount += 1;
+
+			if(this.gameObject.name == "King(Clone)")
+			this.gameObject.GetComponent<kingHp>().enemyhpslider.gameObject.SetActive(false);
+
 			DestroyObject (this.gameObject);
 		}
 	}
-	
+
+
 	void changeState(int state)
 	{
 		if (_currentAnimationState == state)
@@ -129,7 +138,7 @@ public class Enemy : MonoBehaviour {
 		//	Imhurt = true;
 			Player.GetComponent<playerAnimation2>().Colliding = true;
 			MyHp -= Player.GetComponent<playerAnimation2> ().currentDamage;
-			Imhurt = false;
+			//Imhurt = false;
 
 			if(Right)
 				this.transform.position = new Vector2(this.transform.position.x - 2,this.transform.position.y);
@@ -141,6 +150,7 @@ public class Enemy : MonoBehaviour {
 			
 		}
 	}
+
 	IEnumerator Timing()
 	{
 		if(!StopWalk)

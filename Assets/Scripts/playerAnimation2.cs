@@ -55,7 +55,12 @@ public class playerAnimation2 : MonoBehaviour {
 	public Slider hpBar;
 	public GameObject mainMenu;
 	public Text deathText;
+	public Text highScoreText;
 	
+	public static int highScore;
+	public GameObject enemyslider;
+
+
 	public class characterType
 	{
 		public int HP;
@@ -115,6 +120,18 @@ public class playerAnimation2 : MonoBehaviour {
 			Dead = true;
 			mainMenu.GetComponent<inGameMenu>().optionShow();
 			deathText.gameObject.SetActive(true);
+
+			highScore = PlayerPrefs.GetInt("High Score");
+
+			if(highScore < killCount)
+			{
+				PlayerPrefs.SetInt("High Score", killCount);
+				highScore = PlayerPrefs.GetInt("High Score");
+			}
+
+			highScoreText.text = highScore.ToString();
+
+
 		}
 
 		/*
@@ -140,6 +157,7 @@ public class playerAnimation2 : MonoBehaviour {
 	}
 	void Update()
 	{
+
 
 		if (this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Wait"))
 		    alertObj.SetActive(true);
@@ -312,6 +330,7 @@ public class playerAnimation2 : MonoBehaviour {
 			animator.SetTrigger ("Wait");
 		}
 	}
+
 	IEnumerator DeathDelay()
 	{
 		yield return new WaitForSeconds (3);
