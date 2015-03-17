@@ -14,7 +14,6 @@ public class Spawn : MonoBehaviour {
 	public int EnemyNumber;
 	public int randomEnemy;
 	public GameObject currentSpawnEnemy;
-
 	// Use this for initialization
 	void Start () {
 		StartCoroutine (SpawnWaves ());
@@ -24,10 +23,11 @@ public class Spawn : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+	
 	}
 	IEnumerator SpawnWaves ()
 	{
-		while (true) {
+		while (!this.gameObject.GetComponent<playerAnimation2> ().Dead) {
 
 			for (int a = 0; a <= Amout; a++) {
 				CheckRandom = Random.Range (1,3);
@@ -60,9 +60,9 @@ public class Spawn : MonoBehaviour {
 			if(waveCount >= 3)
 			{
 				EnemyNumber++;
-				if(Amout < 15)
+				if(Amout <= 15)
 					Amout += 1;
-				else if(spawnWait > 0.1)
+				else if(spawnWait > 0.1f)
 					spawnWait -= 0.07f;
 				waveCount = 0;
 			}

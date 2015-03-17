@@ -7,7 +7,7 @@ public class playerAnimation2 : MonoBehaviour {
 	public AudioClip playerDeathAudio;
 	public AudioClip playerAttackAudio;
 	public AudioClip playerCritAudio;
-	bool Dead = false;
+	public bool Dead = false;
 
 	Animator animator;
 	bool _isPlaying_walk = false;
@@ -59,6 +59,7 @@ public class playerAnimation2 : MonoBehaviour {
 	
 	public static int highScore;
 	public GameObject enemyslider;
+	public int hpMaxTemp;
 
 
 	public class characterType
@@ -94,11 +95,19 @@ public class playerAnimation2 : MonoBehaviour {
 	}
 	
 	public characterType playerType;
-	
+
+	void Awake()
+	{
+		highScore = PlayerPrefs.GetInt("High Score");
+		highScoreText.text = highScore.ToString();
+		alertObj.SetActive (false);
+	}
 	void Start()
 	{
-	
-		alertObj.SetActive (false);
+		hpMaxTemp = (int)MaxHP;
+		hpBar.maxValue = hpMaxTemp;
+		hpBar.value = hpMaxTemp;
+
 		killCount = 0;
 
 		animator = this.GetComponent<Animator>();
@@ -118,8 +127,8 @@ public class playerAnimation2 : MonoBehaviour {
 			changeState(STATE_DEAD);
 			GetComponent<AudioSource> ().PlayOneShot (playerDeathAudio, 1);
 			Dead = true;
-			mainMenu.GetComponent<inGameMenu>().optionShow();
-			deathText.gameObject.SetActive(true);
+			//mainMenu.GetComponent<inGameMenu>().optionShow();
+			//deathText.gameObject.SetActive(true);
 
 			highScore = PlayerPrefs.GetInt("High Score");
 
@@ -158,7 +167,7 @@ public class playerAnimation2 : MonoBehaviour {
 	void Update()
 	{
 
-
+		Debug.Log (Screen.height);
 		if (this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Wait"))
 		    alertObj.SetActive(true);
 		else 
@@ -225,14 +234,14 @@ public class playerAnimation2 : MonoBehaviour {
 					break;
 				}
 				*/
-				if ((touch.position.x > Screen.width/2 ) && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
+				if ((touch.position.x > Screen.width/2 && touch.position.y < Screen.height- Screen.height/8) && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
 				{
 					changeDirection ("right");
 					Right = true;
 					AttackMode();
 				} 
 				
-				else if ((touch.position.x < Screen.width/2) && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
+				else if ((touch.position.x < Screen.width/2 && touch.position.y < Screen.height- Screen.height/8) && this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
 				{
 					changeDirection ("left");
 					Right = false;

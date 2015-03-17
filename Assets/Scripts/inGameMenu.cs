@@ -9,6 +9,7 @@ public class inGameMenu : MonoBehaviour {
 	bool isPause;
 	public void optionShow()
 	{
+
 		optionTrigger = !optionTrigger;
 		isPause = !isPause;
 		optionPanel.SetActive (optionTrigger);

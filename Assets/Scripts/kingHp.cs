@@ -21,7 +21,6 @@ public class kingHp : MonoBehaviour {
 
 		enemyhpslider = (RectTransform)player.GetComponent<playerAnimation2> ().enemyslider.transform;
 		enemyFollow = this.transform;
-
 		enemyhpslider.gameObject.SetActive (true);
 	}
 
@@ -30,6 +29,12 @@ public class kingHp : MonoBehaviour {
 	void Update () {
 
 		Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint (Camera.main, enemyFollow.position);
+		if (this.GetComponent<Enemy> ().Right) {
+			screenPoint.x += Screen.width/20;
+		}
+		else
+			screenPoint.x -= Screen.width/20;
+		screenPoint.y += Screen.height / 4;
 		enemyhpslider.anchoredPosition = screenPoint - canvasrect.sizeDelta / 2f;
 		enemyhpslider.gameObject.GetComponent<Slider>().value = this.gameObject.GetComponent<Enemy> ().MyHp;
 

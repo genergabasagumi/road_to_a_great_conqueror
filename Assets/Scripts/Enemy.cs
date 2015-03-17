@@ -100,8 +100,8 @@ public class Enemy : MonoBehaviour {
 		if (MyHp <= 0) {
 			Player.GetComponent<playerAnimation2>().killCount += 1;
 
-			if(this.gameObject.name == "King(Clone)")
-			this.gameObject.GetComponent<kingHp>().enemyhpslider.gameObject.SetActive(false);
+			if(this.gameObject.name == "King(Clone)" || this.gameObject.name == "King")
+				this.gameObject.GetComponent<kingHp>().enemyhpslider.gameObject.SetActive(false);
 
 			DestroyObject (this.gameObject);
 		}
