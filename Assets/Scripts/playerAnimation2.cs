@@ -104,6 +104,9 @@ public class playerAnimation2 : MonoBehaviour {
 	}
 	void Start()
 	{
+		//HeyzapAds.start("7b5c65f011a2c2abdf907fc31bcb8ef1", HeyzapAds.FLAG_NO_OPTIONS);
+		HeyzapAds.start("652394e91a2dae688f5afff67ef9ec5e", HeyzapAds.FLAG_NO_OPTIONS);
+		HZInterstitialAd.show();
 		hpMaxTemp = (int)MaxHP;
 		hpBar.maxValue = hpMaxTemp;
 		hpBar.value = hpMaxTemp;
