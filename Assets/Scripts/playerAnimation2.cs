@@ -7,6 +7,10 @@ public class playerAnimation2 : MonoBehaviour {
 	public AudioClip playerDeathAudio;
 	public AudioClip playerAttackAudio;
 	public AudioClip playerCritAudio;
+	public AudioClip HighScoreAudio;
+
+
+
 	public bool Dead = false;
 
 	Animator animator;
@@ -36,6 +40,7 @@ public class playerAnimation2 : MonoBehaviour {
 	public float MyAttackDamage;
 	public float currentDamage;
 
+	public GameObject effectEnemyDefeat;
 	public GameObject effectSlash;
 	public GameObject effectCrit;
 	public bool Right;
@@ -139,6 +144,7 @@ public class playerAnimation2 : MonoBehaviour {
 			{
 				PlayerPrefs.SetInt("High Score", killCount);
 				highScore = PlayerPrefs.GetInt("High Score");
+				GetComponent<AudioSource> ().PlayOneShot (HighScoreAudio, 1);
 			}
 
 			highScoreText.text = highScore.ToString();
@@ -170,7 +176,7 @@ public class playerAnimation2 : MonoBehaviour {
 	void Update()
 	{
 
-		Debug.Log (Screen.height);
+//		Debug.Log (Screen.height);
 		if (this.animator.GetCurrentAnimatorStateInfo (0).IsName ("Wait"))
 		    alertObj.SetActive(true);
 		else 

@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour {
 	int _currentAnimationState = STATE_IDLE;
 
 	public AudioClip enemyAttackAudio;
+	public AudioClip enemyDeathAudio;
 
 	public bool WalkStopMode;
 	public bool StopWalk;
@@ -102,6 +103,8 @@ public class Enemy : MonoBehaviour {
 
 			if(this.gameObject.name == "King(Clone)" || this.gameObject.name == "King")
 				this.gameObject.GetComponent<kingHp>().enemyhpslider.gameObject.SetActive(false);
+
+			//Instantiate(Player.GetComponent<playerAnimation2>().effectEnemyDefeat, this.transform.position,Quaternion.identity);
 
 			DestroyObject (this.gameObject);
 		}
